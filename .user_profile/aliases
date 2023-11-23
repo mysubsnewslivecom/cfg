@@ -1,0 +1,66 @@
+# Setting aliases
+alias mv='mv -v '
+alias cp='cp -ipv '
+alias rm='rm -vrf '
+alias mkdir='mkdir -v '
+alias python=`which python3`
+alias c=clear
+alias ll='ls -lrat '
+alias ld='ls -ld */'
+alias nc='nc -v -z -w 2 '
+alias rsync='rsync -zarvh --progress '
+alias activatepy='source ~/workspace/venv/bin/activate'
+alias dusage='du -h --max-depth=1 *| sort -h'
+alias update='sudo apt update -y && sudo apt upgrade -y && sudo apt autoremove -y'
+alias status='sudo service --status-all'
+
+alias buildpy='[ -f setup.py ] && python3 setup.py bdist_wheel -d dist/ || (clear; printf "setup.py does not exists\n")'
+alias pip='python3 -m pip '
+
+alias ansible_update='ansible-playbook main.yaml -i ../host/vagrant_hosts -l master,worker -K --become-user root --skip-tag docker -t update --become -v'
+alias dockerlogin='docker login --username mysubsnews --password $(echo $DOCKER_HUB_B64_TOKEN|base64 -d)'
+
+alias _gitc='_gitc(){ git pull --rebase; git add --all; git commit -a -m "$@"; git push origin "$(git_current_branch)";  unset -f _gitc; }; _gitc'
+
+if [ $(command_exists kubectl; echo $?) -eq 0 ]; then
+  alias get-ns='kubectl config view --minify -o jsonpath="{..namespace}"'
+  alias kname="kubectl get deployment -o=jsonpath='{.items[*].metadata.name}'"
+  alias kg='kubectl get'
+  alias kpsort='kubectl get pods --sort-by="{.status.containerStatuses[:1].restartCount}"'
+  alias 'kgp!'='kubectl get pods --field-selector=status.phase!=Running'
+  alias krpod='kubectl rollout restart $(kubectl get deploy -o name)'
+  alias kdver="kubectl get deployments.apps -o=custom-columns='DEPLOYMENT:.metadata.name,CONTAINER_IMAGE:.spec.template.spec.containers[*].image,READY_REPLICAS:.status.readyReplicas,NAMESPACE:.metadata.namespace,LABEL:.spec.template.metadata.labels.*'"
+  alias curns='kubectl config view --minify --output "jsonpath={..namespace}"'
+  alias k=kubectl
+  complete -F __start_kubectl k
+
+  function kpg(){
+    kubectl run db-postgresql-client --rm --tty -i --restart='Never' --namespace default --image docker.io/bitnami/postgresql:14 --env="PGPASSWORD=$POSTGRES_PASSWORD" --command -- psql --host db-postgresql -U postgres -d postgres -p 5432
+
+  }
+
+  function kcdebug() {
+    kubectl run -i --rm --tty debug --image=busybox --restart=Never -- sh
+  }
+fi
+
+if [ $(command_exists fzf; echo $?) -eq 0 ]; then
+
+  alias hx="eval \$(history | fzf -e +s | sed 's/ *[0-9]* *//')"
+  alias h="history | fzf -e +s"
+
+fi
+
+
+function vault_client(){
+  docker run -it -v $HOME/workspace/src/vault/:/app \
+    vault-client:latest bash
+}
+alias dot='/usr/bin/git --git-dir=/home/linux/.cfg/ --work-tree=/home/linux'
+
+# Docker compose
+alias dc-up='docker compose $([[ -f .env ]] && echo --env-file .env) up'
+alias dc-upd='docker compose $([[ -f .env ]] && echo --env-file .env) up -d'
+alias dc-down='docker compose $([[ -f .env ]] && echo --env-file .env) down --remove-orphans'
+
+
