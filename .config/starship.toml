@@ -1,0 +1,81 @@
+format = """
+$python\
+$custom\
+$hostname\
+$shlvl\
+$directory\
+$git_branch\
+$git_commit\
+$git_state\
+$git_status\
+$kubernetes\
+$env_var\
+$cmd_duration\
+$line_break\
+$character"""
+
+# Don't print a new line at the start of the prompt
+add_newline = false
+
+[character]
+success_symbol = '[❯](bold green)'
+error_symbol = '[❯](bold red)'
+format = '$symbol '
+disabled = false
+
+[cmd_duration]
+min_time = 1000
+
+# ~/.config/starship.toml
+
+[hostname]
+ssh_only = false
+ssh_symbol = ''
+format = '[$ssh_symbol](bold blue) on [$hostname](bold red) '
+disabled = false
+
+[username]
+style_user = 'white bold'
+style_root = 'black bold'
+format = '[$user]($style) '
+disabled = false
+show_always = true
+aliases = { "ubuntu" = "super overload" }
+
+[directory]
+truncation_length = 100
+truncate_to_repo = false
+style = " yellow"
+format = "[$path]($style)[$read_only]($read_only_style) "
+
+[git_branch]
+symbol = ""
+style = "bold white"
+format = '[\($symbol$branch\)]($style) '
+
+[git_status]
+# I don't care about untracked files or that there's a stash present.
+untracked = ""
+format = '([\[$conflicted$deleted$renamed$modified$staged$behind\]]($style) )'
+modified = '*'
+
+[python]
+symbol = '🐍'
+format = '[${symbol}${pyenv_prefix} (${version} )(\($virtualenv\)) ]($style)'
+style = 'fg:#2ECC71 fg:#2C3E50'
+
+[status]
+disabled = false
+format = '[\[$status - $common_meaning\]](green)'
+
+[time]
+format = '🕙[\[ $time \]]($style) '
+time_format = '%a %b %d %Y %l:%M%'
+disabled = false
+utc_time_offset = '-5'
+time_range = '10:00:00-14:00:00'
+
+[custom.tztime]
+command = 'date +"%a %b %d %Y %H:%M:%S"'
+when = "true"
+format = '[$symbol($output)](green)'

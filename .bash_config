@@ -1,0 +1,9 @@
+export ANSIBLE_HOME="${HOME}/workspace/git/infra/ansible"
+export ANSIBLE_INVENTORY="${ANSIBLE_HOME}/inventory/inventory.ini"
+export ANSIBLE_NOCOWS="1"
+export VENV="$HOME/workspace/venv"
+export FZF_DEFAULT_OPTS="--height 40% --layout reverse --info inline --border --color 'fg:#bbccdd,fg+:#ddeeff,bg:#334455,preview-bg:#223344,border:#778899' --bind shift-up:preview-page-up,shift-down:preview-page-down"
+export PATH="$HOME/.local/bin:${VENV}/.venv/bin:$PATH"
+
+# VAULT
+export VAULT_ADDR="http://octogiggle.local:8200"
