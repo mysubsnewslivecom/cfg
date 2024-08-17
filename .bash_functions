@@ -123,3 +123,9 @@ function kls(){
   [[ -z "${container_name}" ]] && return
   kubectl logs "${pod_name}" -c "${container_name}" "$@"
 }
+
+function gb() {
+  git branch -a -vv --color=always | grep -v '/HEAD\s' |
+  fzf --height 40% --ansi --multi --tac | sed 's/^..//' | awk '{print $1}' |
+  sed 's#^remotes/[^/]*/##'
+}
