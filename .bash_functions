@@ -2,14 +2,6 @@ function command_exists() {
 	command -v "$@" > /dev/null 2>&1
 }
 
-function weather {
-    curl -s "http://wttr.in/${1:-Krakow}" | head -n 27
-}
-
-function config {
-    /usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME $@
-}
-
 function activate-venv() {
   local selected_env
   selected_env=$(ls -a $VENV/ | fzf)
@@ -111,4 +103,23 @@ function info(){
   local reset="\e[0m"
   local message="$1"
   printf "❯ ${green}%s${reset}\n" "${message}"
+}
+
+function kexecs(){
+  local container_name pod_name
+  pod_name=$(kubectl get pod -o name| fzf +s -i)
+  [[ -z "${pod_name}" ]] && return
+  container_name=$(kubectl get "${pod_name}" -o jsonpath='{.spec.containers[*].name}'| tr -s " " "\n"| fzf +s -i)
+  [[ -z "${container_name}" ]] && return
+  kubectl exec --stdin --tty "${pod_name}" -c "${container_name}" -- sh
+}
+
+function kls(){
+  args="${@:-}"
+  local container_name pod_name
+  pod_name=$(kubectl get pod -o name| fzf +s -i)
+  [[ -z "${pod_name}" ]] && return
+  container_name=$(kubectl get "${pod_name}" -o jsonpath='{.spec.containers[*].name}{" "}{.spec.initcontainers[*].name}'| tr -s " " "\n"| fzf +s -i)
+  [[ -z "${container_name}" ]] && return
+  kubectl logs "${pod_name}" -c "${container_name}" "$@"
 }

@@ -3,7 +3,6 @@ alias mv='mv -v '
 alias cp='cp -ipv '
 alias rm='rm -vrf '
 alias mkdir='mkdir -v '
-alias md='mkdir -pv '
 alias c='clear'
 
 alias ll='ls -lrat '
@@ -12,9 +11,10 @@ alias l='ls -lFh'     #size,show type,human readable
 alias la='ls -lAFh'   #long list,show almost all,show type,human readable
 alias lr='ls -tRFh'   #sorted by date,recursive,show type,human readable
 alias lt='ls -ltFh'   #long list,sorted by date,show type,human readable
+alias update='sudo apt update -y && sudo apt upgrade -y && sudo apt autoremove -y'
 
 alias nc='nc -v -z -w 2 '
-alias syncr="rsync -avzHP --exclude='.git/'"
+alias syncr='rsync -zarvh --progress --exclude=".git/"'
 alias rsync-copy="rsync -avz --progress -h"
 alias rsync-move="rsync -avz --progress -h --remove-source-files"
 alias rsync-update="rsync -avzu --progress -h"
@@ -34,17 +34,17 @@ alias hx="eval \$(history | fzf -e +s | sed 's/ *[0-9]* *//')"
 alias h="history | fzf -e +s"
 alias get-secret=vault-keys
 alias pyv=activate-venv
-alias fvim='nvim $(fzf --preview="bat --color=always {}" --bind shift-up:preview-page-up,shift-down:preview-page-down)'
-alias ff='fzf --preview=less --bind shift-up:preview-page-up,shift-down:preview-page-down'
+alias kns="kubectl get ns -o jsonpath='{.items[*].metadata.name}'| tr -s ' ' '\n'| fzf +s -i| xargs -I{} kubectl config set-context --current --namespace={}"
 fi
 
 # kubectl
 if command_exists kubectl; then
+source <(kubectl completion bash)
 alias k=kubectl
-complete -F __start_kubectl k
+complete -o default -F __start_kubectl k
 alias kg='kubectl get '
-alias get-ns='kubectl config view --minify -o jsonpath="{..namespace}"'
-alias curns='kubectl config view --minify --output "jsonpath={..namespace}"'
+alias get-ns='kubectl config view --minify -o jsonpath="{..namespace}"; echo'
+alias curns='kubectl config view --minify --output "jsonpath={..namespace}"; echo'
 
 alias kname="kubectl get deployment -o=jsonpath='{.items[*].metadata.name}'"
 alias kdver="kubectl get deployments.apps -o=custom-columns='DEPLOYMENT:.metadata.name,CONTAINER_IMAGE:.spec.template.spec.containers[*].image,READY_REPLICAS:.status.readyReplicas,NAMESPACE:.metadata.namespace,LABEL:.spec.template.metadata.labels.*'"
@@ -67,15 +67,10 @@ fi
 
 if command_exists docker; then
 alias d=docker
-alias drun="docker run -it --rm --network alpine-net"
+alias dexec="docker run -it --rm --network alpine-net"
 alias dockerlogin='docker login --username mysubsnews --password $(echo $DOCKER_HUB_B64_TOKEN|base64 -d)'
-alias dxcit='docker container exec -it'
-alias dbuild="docker build "
-
-alias dc-up="docker compose $([[ -f .env ]] && echo --env-file .env) -f docker-compose.yml up -d"
-alias dc-down="docker compose down --remove-orphans"
-
 fi
+
 
 if command_exists terraform; then
 alias tf='terraform'
